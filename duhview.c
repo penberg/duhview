@@ -68,6 +68,9 @@ static void die(const char *s)
 #define SCREEN_COLS		80
 #define SCREEN_ROWS		43
 
+#define BUFFER_COLS		80
+#define BUFFER_ROWS		1000
+
 /*
  * Visible window dimensions
  */
@@ -76,7 +79,11 @@ static void die(const char *s)
 #define SCREEN_HEIGHT		(SCREEN_ROWS * CHAR_HEIGHT)
 #define SCREEN_DEPTH		32
 
-static char			mem[SCREEN_WIDTH * SCREEN_HEIGHT * SCREEN_DEPTH / 8];
+#define BUFFER_WIDTH		(BUFFER_COLS * CHAR_WIDTH)
+#define BUFFER_HEIGHT		(BUFFER_ROWS * CHAR_HEIGHT)
+#define BUFFER_DEPTH		32
+
+static char			mem[BUFFER_WIDTH * BUFFER_HEIGHT * BUFFER_DEPTH / 8];
 
 #define R(x) (((uint32_t) x))
 #define G(x) (((uint32_t) x) << 8)
@@ -118,7 +125,7 @@ draw_char(struct bitmap_font *font, int col, int row, struct char_attr *attr, in
 	int start_x;
 	int start_y;
 
-	if (col < 0 || col >= SCREEN_COLS || row < 0 || row >= SCREEN_ROWS)
+	if (col < 0 || col >= BUFFER_COLS || row < 0 || row >= BUFFER_ROWS)
 		return;
 
 	bmap = &font->chars[ch];
@@ -132,7 +139,7 @@ draw_char(struct bitmap_font *font, int col, int row, struct char_attr *attr, in
 			uint32_t *p;
 			int offset;
 
-			offset = ((SCREEN_WIDTH * (start_y + y)) + (start_x + x)) * SCREEN_DEPTH/8;
+			offset = ((BUFFER_WIDTH * (start_y + y)) + (start_x + x)) * BUFFER_DEPTH/8;
 
 			p = (void *) mem + offset;
 
@@ -245,8 +252,8 @@ static int csi_sequence(FILE *input, struct cursor_pos *pos, struct char_attr *a
 				n = 1;
 			// printf("CUD(%d) – CUrsor Down\n", n);
 			pos->col += n;
-			if (pos->col > SCREEN_ROWS-1)
-				pos->col = SCREEN_ROWS-1;
+			if (pos->col > BUFFER_ROWS-1)
+				pos->col = BUFFER_ROWS-1;
 			goto exit;
 		}
 		case 'C': {
@@ -256,8 +263,8 @@ static int csi_sequence(FILE *input, struct cursor_pos *pos, struct char_attr *a
 				n = 1;
 			// printf("CUF(%d) – CUrsor Forward\n", n);
 			pos->col += n;
-			if (pos->col > SCREEN_COLS-1)
-				pos->col = SCREEN_COLS-1;
+			if (pos->col > BUFFER_COLS-1)
+				pos->col = BUFFER_COLS-1;
 			goto exit;
 		}
 #if 0
@@ -358,7 +365,7 @@ write_char(struct bitmap_font *font, struct cursor_pos *pos, struct char_attr *a
 		draw_char(font, pos->col++, pos->row, attr, ch);
 		break;
 	}
-	if (pos->col == SCREEN_COLS) {
+	if (pos->col == BUFFER_COLS) {
 		pos->col = 0;
 		pos->row++;
 	}
@@ -442,10 +449,10 @@ int main(int argc, char *argv[])
 
 	ansi_surface = SDL_CreateRGBSurfaceFrom(
 				mem,
-				SCREEN_WIDTH,
-				SCREEN_HEIGHT,
-				SCREEN_DEPTH,
-				SCREEN_WIDTH * SCREEN_DEPTH / 8,
+				BUFFER_WIDTH,
+				BUFFER_HEIGHT,
+				BUFFER_DEPTH,
+				BUFFER_WIDTH * BUFFER_DEPTH / 8,
 				rmask, gmask, bmask, amask);
 	if (!ansi_surface)
 		die("Unable to create SDL RBG surface");
