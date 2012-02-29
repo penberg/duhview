@@ -426,6 +426,7 @@ int main(int argc, char *argv[])
 	struct sauce_info *sauce;
 	char window_caption[256];
 	SDL_Surface *screen;
+	SDL_Rect ansi_rect;
 	SDL_Event ev;
 	Uint32 flags;
 	FILE *input;
@@ -483,8 +484,13 @@ int main(int argc, char *argv[])
 
 	SDL_EnableKeyRepeat(200, 50);
 
+	ansi_rect.x = 0;
+	ansi_rect.y = 0;
+	ansi_rect.w = SCREEN_WIDTH;
+	ansi_rect.h = SCREEN_HEIGHT;
+
 	for (;;) {
-		SDL_BlitSurface(ansi_surface, NULL, screen, NULL);
+		SDL_BlitSurface(ansi_surface, &ansi_rect, screen, NULL);
 		SDL_Flip(screen);
 
 		while (SDL_PollEvent(&ev)) {
@@ -493,6 +499,18 @@ int main(int argc, char *argv[])
 				goto exit;
 			case SDL_KEYDOWN: {
 				switch (ev.key.keysym.sym) {
+				case SDLK_UP:
+					ansi_rect.y -= CHAR_HEIGHT;
+					break;
+				case SDLK_DOWN:
+					ansi_rect.y += CHAR_HEIGHT;
+					break;
+				case SDLK_PAGEUP:
+					ansi_rect.y -= SCREEN_HEIGHT;
+					break;
+				case SDLK_PAGEDOWN:
+					ansi_rect.y += SCREEN_HEIGHT;
+					break;
 				case SDLK_ESCAPE:
 					goto exit;
 					break;
