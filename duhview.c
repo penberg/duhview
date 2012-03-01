@@ -1,5 +1,6 @@
 #include "msdos.h"
 #include "sauce.h"
+#include "xbin.h"
 
 #include <SDL/SDL.h>
 
@@ -119,7 +120,7 @@ static uint32_t attr_color_to_rgba(int intensity, int color)
 }
 
 static void
-draw_char(struct bitmap_font *font, int col, int row, struct char_attr *attr, int ch)
+draw_char(struct bitmap_font *font, int col, int row, uint32_t fg_rgba, uint32_t bg_rgba, uint8_t ch)
 {
 	struct bitmap_char *bmap;
 	int start_x;
@@ -144,9 +145,9 @@ draw_char(struct bitmap_font *font, int col, int row, struct char_attr *attr, in
 			p = (void *) mem + offset;
 
 			if (bmap->scanlines[y] & (1 << (CHAR_WIDTH - x - 1))) {
-				rgba = attr_color_to_rgba(attr->intensity, attr->fg_color);
+				rgba = fg_rgba;
 			} else {
-				rgba = attr_color_to_rgba(NORMAL, attr->bg_color);
+				rgba = bg_rgba;
 			}
 
 			*p = rgba;
@@ -361,9 +362,15 @@ write_char(struct bitmap_font *font, struct cursor_pos *pos, struct char_attr *a
 			write_char(font, pos, attr, ' ');
 		} while (pos->col % 8);
 		break;
-	default:
-		draw_char(font, pos->col++, pos->row, attr, ch);
+	default: {
+		uint32_t fg_rgba, bg_rgba;
+
+		fg_rgba = attr_color_to_rgba(attr->intensity, attr->fg_color);
+		bg_rgba = attr_color_to_rgba(NORMAL, attr->bg_color);
+
+		draw_char(font, pos->col++, pos->row, fg_rgba, bg_rgba, ch);
 		break;
+	}
 	}
 	if (pos->col == BUFFER_COLS) {
 		pos->col = 0;
@@ -425,6 +432,7 @@ int main(int argc, char *argv[])
 	struct bitmap_font *font;
 	struct sauce_info *sauce;
 	char window_caption[256];
+	struct xbin_image *xbin;
 	SDL_Surface *screen;
 	SDL_Rect ansi_rect;
 	SDL_Event ev;
@@ -462,7 +470,35 @@ int main(int argc, char *argv[])
 
 	input = fopen(argv[1], "r");
 
-	load_img(input, font);
+	xbin = xbin_load_image(fileno(input));
+	if (xbin) {
+		struct bitmap_font *xbin_font = (void *) xbin->xb_font->Font;
+		int row, col;
+
+		for (row = 0; row < xbin->xb_header->Height; row++) {
+			for (col = 0; col < xbin->xb_header->Width; col++) {
+				uint32_t fg_rgba, bg_rgba;
+				unsigned long offset;
+				uint8_t ch, attr;
+
+				offset = (row * xbin->xb_header->Width + col) * 2;
+
+				ch = xbin->xb_data[offset];
+				attr = xbin->xb_data[offset + 1];
+
+				if (xbin->xb_palette) {
+					fg_rgba = xbin_palette_rgba(xbin->xb_palette, (attr & 0x0f));
+					bg_rgba = xbin_palette_rgba(xbin->xb_palette, (attr & 0xf0) >> 4);
+				} else {
+					fg_rgba = attr_color_to_rgba((attr & 0x08), (attr & 0x0e));
+					bg_rgba = attr_color_to_rgba(NORMAL, (attr & 0xf0) >> 4);
+				}
+
+				draw_char(xbin_font, col, row, fg_rgba, bg_rgba, ch);
+			}
+		}
+	} else
+		load_img(input, font);
 
 	fseek(input, 0, SEEK_SET);
 

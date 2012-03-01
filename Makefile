@@ -28,10 +28,10 @@ PROGRAMS = duhview duhsauce
 
 all: $(PROGRAMS)
 
-duhview: sauce.o
+duhview: sauce.o xbin.o
 
 duhsauce: sauce.o
 
 clean:
-	rm -f $(PROGRAMS)
+	rm -f $(PROGRAMS) *.o
 .PHONY: clean
