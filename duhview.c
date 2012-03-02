@@ -469,6 +469,8 @@ int main(int argc, char *argv[])
 	flags = SDL_HWSURFACE | SDL_ASYNCBLIT | SDL_HWACCEL | SDL_DOUBLEBUF;
 
 	input = fopen(argv[1], "r");
+	if (!input)
+		die("Unable to open file");
 
 	xbin = xbin_load_image(fileno(input));
 	if (xbin) {
