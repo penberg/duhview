@@ -43,6 +43,13 @@ struct xbin_image {
 	char				*xb_data;
 };
 
+enum {
+	XBIN_COMP_NONE			= 0x00,	/* No compression */
+	XBIN_COMP_CHAR			= 0x40,	/* Character compression */
+	XBIN_COMP_ATTR			= 0x80,	/* Attribute compression */
+	XBIN_COMP_BOTH			= 0xc0, /* Character/attribute compression */
+};
+
 struct xbin_image *xbin_load_image(int fd);
 
 #define XBIN_R(r) ((uint32_t) r * 4)
