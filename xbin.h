@@ -60,11 +60,6 @@ static inline uint32_t xbin_palette_rgba(struct xbin_palette *palette, uint8_t c
 {
 	struct xbin_rgb *rgb = &palette->Palette[color];
 
-	if (color == 0)
-		return 0x00000000UL;
-	else if (color == 1)
-		return 0x00ffffffUL;
-
 	return XBIN_R(rgb->r) | XBIN_G(rgb->g) | XBIN_B(rgb->b);
 }
 
