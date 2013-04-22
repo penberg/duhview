@@ -570,8 +570,17 @@ restart:
 					break;
 				case SDLK_ESCAPE:
 					goto exit;
-				case SDLK_RETURN:
-					file_idx = (file_idx + 1) % nr_files;
+				case SDLK_LEFT:
+					if (file_idx > 0)
+						file_idx--;
+					else
+						file_idx = nr_files-1;
+					goto restart;
+				case SDLK_RIGHT:
+					if (file_idx < (nr_files-1))
+						file_idx++;
+					else
+						file_idx = 0;
 					goto restart;
 				default:
 					break;
