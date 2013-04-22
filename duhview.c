@@ -543,6 +543,9 @@ restart:
 				goto exit;
 			case SDL_KEYDOWN: {
 				switch (ev.key.keysym.sym) {
+				case SDLK_HOME:
+					ansi_rect.y = 0;
+					break;
 				case SDLK_UP:
 					if (ansi_rect.y > CHAR_HEIGHT)
 						ansi_rect.y -= CHAR_HEIGHT;
