@@ -538,13 +538,19 @@ int main(int argc, char *argv[])
 			case SDL_KEYDOWN: {
 				switch (ev.key.keysym.sym) {
 				case SDLK_UP:
-					ansi_rect.y -= CHAR_HEIGHT;
+					if (ansi_rect.y > CHAR_HEIGHT)
+						ansi_rect.y -= CHAR_HEIGHT;
+					else
+						ansi_rect.y = 0;
 					break;
 				case SDLK_DOWN:
 					ansi_rect.y += CHAR_HEIGHT;
 					break;
 				case SDLK_PAGEUP:
-					ansi_rect.y -= SCREEN_HEIGHT;
+					if (ansi_rect.y > SCREEN_HEIGHT)
+						ansi_rect.y -= SCREEN_HEIGHT;
+					else
+						ansi_rect.y = 0;
 					break;
 				case SDLK_PAGEDOWN:
 					ansi_rect.y += SCREEN_HEIGHT;
