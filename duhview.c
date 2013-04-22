@@ -337,8 +337,7 @@ static int csi_sequence(FILE *input, struct cursor_pos *pos, struct char_attr *a
 			goto exit;
 		}
 		default:
-			printf("%c\n", ch);
-			assert(0);
+			break;
 		}
 	}
 exit:
