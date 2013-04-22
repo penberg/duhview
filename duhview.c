@@ -242,7 +242,6 @@ static int csi_sequence(FILE *input, struct cursor_pos *pos, struct char_attr *a
 
 			if (!n)
 				n = 1;
-			// printf("CUU(%d) – CUrsor Up\n", n);
 			pos->row -= n;
 			if (pos->row < 0)
 				pos->row = 0;
@@ -253,7 +252,6 @@ static int csi_sequence(FILE *input, struct cursor_pos *pos, struct char_attr *a
 
 			if (!n)
 				n = 1;
-			// printf("CUD(%d) – CUrsor Down\n", n);
 			pos->col += n;
 			if (pos->col > BUFFER_ROWS-1)
 				pos->col = BUFFER_ROWS-1;
@@ -264,7 +262,6 @@ static int csi_sequence(FILE *input, struct cursor_pos *pos, struct char_attr *a
 
 			if (!n)
 				n = 1;
-			// printf("CUF(%d) – CUrsor Forward\n", n);
 			pos->col += n;
 			if (pos->col > BUFFER_COLS-1)
 				pos->col = BUFFER_COLS-1;
@@ -276,7 +273,6 @@ static int csi_sequence(FILE *input, struct cursor_pos *pos, struct char_attr *a
 
 			if (!n)
 				n = 1;
-			printf("CUB(%d) – CUrsor Back\n", n);
 			pos->col -= n;
 			if (pos->col < 0)
 				pos->col = 0;
@@ -287,7 +283,6 @@ static int csi_sequence(FILE *input, struct cursor_pos *pos, struct char_attr *a
 			int n = args[0];
 			int m = args[1];
 
-			// printf("CUP(%d;%d) – CUrsor Position\n", n, m);
 			pos->col = n-1;
 			pos->row = m-1;
 			goto exit;
@@ -296,7 +291,6 @@ static int csi_sequence(FILE *input, struct cursor_pos *pos, struct char_attr *a
 #if 0
 			int n = args[0];
 
-			// printf("ED(%d) – Erase Data\n", n);
 #endif
 			// TODO
 			goto exit;
@@ -304,7 +298,6 @@ static int csi_sequence(FILE *input, struct cursor_pos *pos, struct char_attr *a
 		case 'm': {
 			int i;
 
-			// puts("SGR - Select Graphic Rendition:");
 			for (i = 0; i <= ndx; i++) {
 				int n = args[i];
 
