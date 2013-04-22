@@ -340,7 +340,7 @@ static int csi_sequence(FILE *input, struct cursor_pos *pos, struct char_attr *a
 
 		default:
 			fprintf(stderr, "ansi: unhandled command '%c' (0x%x) in escape sequence\n", ch, ch);
-			break;
+			goto exit;
 		}
 	}
 exit:
