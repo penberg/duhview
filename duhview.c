@@ -328,6 +328,16 @@ static int csi_sequence(FILE *input, struct cursor_pos *pos, struct char_attr *a
 			}
 			goto exit;
 		}
+
+		/* Set screen mode */
+		case 'h':
+			fprintf(stderr, "ansi: screen mode %d not supported\n", args[0]);
+			goto exit;
+
+		/* Reset screen mode */
+		case 'I':
+			goto exit;
+
 		default:
 			fprintf(stderr, "ansi: unhandled command '%c' (0x%x) in escape sequence\n", ch, ch);
 			break;
