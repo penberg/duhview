@@ -565,6 +565,7 @@ restart:
 					else
 						ansi_rect.y = 0;
 					break;
+				case SDLK_SPACE:
 				case SDLK_PAGEDOWN:
 					ansi_rect.y += SCREEN_HEIGHT;
 					break;
