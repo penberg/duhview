@@ -28,7 +28,7 @@ PROGRAMS = duhview duhsauce
 
 all: $(PROGRAMS)
 
-duhview: sauce.o xbin.o
+duhview: sauce.o xbin.o cp437-font.o
 
 duhsauce: sauce.o
 

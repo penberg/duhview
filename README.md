@@ -23,9 +23,7 @@ $ ./duhview examples/skull.ans
 
 ## Credits and License
 
-CP437 font by Jeff Connelly:
-
-  http://xyzzy.freeshell.org/cp437/
+CP437 font from [escape.js][escape.js].
 
 Source code is
 
@@ -52,3 +50,4 @@ SOFTWARE.
 ```
 
 [Sixteen Colors]: http://sixteencolors.net/
+[escape.js]: http://256.io/escapes.js/

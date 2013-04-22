@@ -1,6 +1,7 @@
 #include "msdos.h"
 #include "sauce.h"
 #include "xbin.h"
+#include "cp437-font.h"
 
 #include <SDL/SDL.h>
 
@@ -89,6 +90,7 @@ static char			mem[BUFFER_WIDTH * BUFFER_HEIGHT * BUFFER_DEPTH / 8];
 #define R(x) (((uint32_t) x))
 #define G(x) (((uint32_t) x) << 8)
 #define B(x) (((uint32_t) x) << 16)
+
 
 static uint32_t attr_color_to_rgba(int intensity, int color)
 {
@@ -444,9 +446,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-	font = load_font("cp437.fnt");
-	if (!font)
-		die("Unable to load font");
+	font = (void *) cp437_font;
 
 	if (SDL_Init(SDL_INIT_VIDEO) != 0)
 		die("Unable to initialize SDL");
