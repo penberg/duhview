@@ -422,12 +422,13 @@ exit:
 
 static void usage(char *program)
 {
-	printf("usage: %s <file>\n", basename(program));
+	printf("usage: %s <file> [<file> ...]\n", basename(program));
 }
 
 int main(int argc, char *argv[])
 {
 	Uint32 rmask, gmask, bmask, amask;
+	unsigned long file_idx, nr_files;
 	SDL_Surface *ansi_surface;
 	struct bitmap_font *font;
 	struct sauce_info *sauce;
@@ -439,10 +440,12 @@ int main(int argc, char *argv[])
 	Uint32 flags;
 	FILE *input;
 
-	if (argc != 2) {
+	if (argc < 2) {
 		usage(argv[0]);
 		exit(1);
 	}
+
+	nr_files = argc - 1;
 
 	font = (void *) cp437_font;
 
@@ -466,7 +469,12 @@ int main(int argc, char *argv[])
 
 	flags = SDL_HWSURFACE | SDL_ASYNCBLIT | SDL_HWACCEL | SDL_DOUBLEBUF;
 
-	input = fopen(argv[1], "r");
+	file_idx = 0;
+
+restart:
+	memset(mem, 0, sizeof(mem));
+
+	input = fopen(argv[file_idx + 1], "r");
 	if (!input)
 		die("Unable to open file");
 
@@ -555,7 +563,9 @@ int main(int argc, char *argv[])
 					break;
 				case SDLK_ESCAPE:
 					goto exit;
-					break;
+				case SDLK_RETURN:
+					file_idx = (file_idx + 1) % nr_files;
+					goto restart;
 				default:
 					break;
 				}
