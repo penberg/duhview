@@ -330,8 +330,7 @@ static int csi_sequence(FILE *input, struct cursor_pos *pos, struct char_attr *a
 					attr->bg_color = n - 40;
 					break;
 				default:
-					printf("%d\n", n);
-					assert(0);
+					break;
 				}
 			}
 			goto exit;
