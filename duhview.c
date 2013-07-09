@@ -230,6 +230,10 @@ static int csi_sequence(FILE *input, struct cursor_pos *pos, struct char_attr *a
 			return -1;
 
 		switch (ch) {
+		case '?':
+		case '=':
+			/* ignore */
+			break;
 		case '0' ... '9':
 			args[ndx] = args[ndx] * 10 + (ch - '0');
 			break;
