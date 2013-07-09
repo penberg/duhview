@@ -442,8 +442,11 @@ int main(int argc, char *argv[])
 	struct sauce_info *sauce;
 	char window_caption[256];
 	struct xbin_image *xbin;
+	char *path_dup = NULL;
 	SDL_Surface *screen;
 	SDL_Rect ansi_rect;
+	const char *path;
+	char *filename;
 	SDL_Event ev;
 	Uint32 flags;
 	FILE *input;
@@ -480,11 +483,19 @@ int main(int argc, char *argv[])
 	file_idx = 0;
 
 restart:
+	free(path_dup);
+
 	memset(mem, 0, sizeof(mem));
 
-	input = fopen(argv[file_idx + 1], "r");
+	path = argv[file_idx + 1];
+
+	input = fopen(path, "r");
 	if (!input)
 		die("Unable to open file");
+
+	path_dup = strdup(path);
+
+	filename = basename(path_dup);
 
 	xbin = xbin_load_image(fileno(input));
 	if (xbin) {
@@ -521,10 +532,10 @@ restart:
 	sauce = sauce_info_read(input);
 
 	if (sauce)
-		snprintf(window_caption, sizeof window_caption, "%s - %s / %s - DuhView",
-			sauce->workname, sauce->author, sauce->group);
+		snprintf(window_caption, sizeof window_caption, "%s - %s / %s - %s - DuhView",
+			sauce->workname, sauce->author, sauce->group, filename);
 	else
-		snprintf(window_caption, sizeof window_caption, "DuhView");
+		snprintf(window_caption, sizeof window_caption, "%s - DuhView", filename);
 
 	fclose(input);
 
