@@ -2,6 +2,7 @@
 
 #include "msdos.h"
 
+#include <string.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
@@ -65,10 +66,10 @@ static struct sauce_info *sauce_record_to_info(struct sauce_record *record)
 	if (!info)
 		return NULL;
 
-	info->workname = sauce_read(record->workname, sizeof record->workname);
-	info->author = sauce_read(record->author, sizeof record->author);
-	info->group = sauce_read(record->group, sizeof record->group);
-	info->date = sauce_read(record->date, sizeof record->date);
+	info->workname = sauce_read(record->Title, sizeof record->Title);
+	info->author = sauce_read(record->Author, sizeof record->Author);
+	info->group = sauce_read(record->Group, sizeof record->Group);
+	info->date = sauce_read(record->Date, sizeof record->Date);
 
 	return info;
 }
@@ -77,22 +78,15 @@ struct sauce_info *sauce_info_read(FILE *input)
 {
 	struct sauce_record record;
 
-	for (;;) {
-		int ch;
-
-		ch = fgetc(input);
-		if (ch < 0)
-			return NULL;
-
-		if (ch < 0 || ch == MSDOS_EOF)
-			break;
-	}
-
-	fgetc(input);	/* Extra MS-DOS EOF marker */
-
-	memset(&record, 0, sizeof record);
+	fseek(input, -sizeof(record), SEEK_END);
 
 	fread(&record, sizeof record, 1, input);
+
+	if (memcmp(record.ID, "SAUCE", sizeof(record.ID)))
+		return NULL;
+
+	if (memcmp(record.Version, "00", sizeof(record.Version)))
+		return NULL;
 
 	return sauce_record_to_info(&record);
 }
