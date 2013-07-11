@@ -335,11 +335,12 @@ static int csi_sequence(FILE *input, struct cursor_pos *pos, struct char_attr *a
 
 		/* Set screen mode */
 		case 'h':
-			fprintf(stderr, "ansi: screen mode %d not supported\n", args[0]);
+			/* ignore */
 			goto exit;
 
 		/* Reset screen mode */
-		case 'I':
+		case 'l':
+			/* ignore */
 			goto exit;
 
 		default:
